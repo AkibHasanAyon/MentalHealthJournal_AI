@@ -4,7 +4,7 @@ import os
 import json
 
 # Mock env var
-os.environ["OPENAI_API_KEY"] = "fake-key"
+os.environ["OPENAI_API_KEY"] = "fake-key_"
 
 from prompt_generator import generate_prompt
 
