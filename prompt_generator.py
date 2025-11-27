@@ -12,7 +12,7 @@ def generate_prompt(mood):
     Generates a reflective journal prompt based on the user's mood.
     
     Args:
-        mood (str): The user's mood. Expected values: 'excellent', 'very good', 'good', 'okay', 'neutral', 'slightly off', 'low', 'stressed', 'sad', 'awful'.
+        mood (str): The user's mood. Expected values: 'Excited', 'Happy', 'Calm', 'Neutral', 'Tired', 'Slightly Off', 'Anxious', 'Stressed', 'Sad', 'Awful'.
         
     Returns:
         str: A generated journal prompt question.
@@ -21,8 +21,7 @@ def generate_prompt(mood):
     # Validate mood (optional, but good for debugging)
     # New 10 moods as requested
     valid_moods = [
-        "excellent", "very good", "good", "okay", "neutral", 
-        "slightly off", "low", "stressed", "sad", "awful"
+        "Excited", "Happy", "Calm", "Neutral", "Tired", "Slightly Off", "Anxious", "Stressed", "Sad", "Awful"
     ]
     
     # Normalize input mood to lowercase and remove potential numbering/emojis if passed loosely
