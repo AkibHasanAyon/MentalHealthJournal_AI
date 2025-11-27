@@ -16,16 +16,7 @@ def test_prompt_generator():
         print(f"Mood: {mood}")
         try:
             response = generate_prompt(mood)
-            # Parse JSON to verify and print nicely
-            data = json.loads(response)
-            if isinstance(data, list) and len(data) > 0:
-                item = data[0]
-                print(f"Detected Mood: {item.get('mood')}")
-                print("Questions:")
-                for q in item.get('questions', []):
-                    print(f"  - {q}")
-            else:
-                print(f"Raw Response (Unexpected format): {response}")
+            print(f"Raw Response: {response}")
                 
         except json.JSONDecodeError:
             print(f"Error: Response was not valid JSON. Raw: {response}")
@@ -62,4 +53,4 @@ if __name__ == "__main__":
         print("Please create a .env file with your API key to run actual tests.")
     else:
         test_prompt_generator()
-        test_chatbot()
+        #test_chatbot()

@@ -59,15 +59,13 @@ Use this function to generate reflective journal questions.
 
 **Output Format:**
 ```json
-[
-  {
-    "mood": "happy",
-    "questions": [
-      "What made you smile today?",
-      "List three things you are grateful for."
-    ]
-  }
-]
+{
+  "mood": "happy",
+  "questions": [
+    { "question": "What made you smile today?" },
+    { "question": "List three things you are grateful for." }
+  ]
+}
 ```
 
 **Example Usage:**
@@ -77,7 +75,8 @@ import json
 
 json_response = generate_journal_prompts("good")
 data = json.loads(json_response)
-print(data[0]['questions'])
+# Accessing the first question
+print(data['questions'][0]['question'])
 ```
 
 ## Setup & Configuration

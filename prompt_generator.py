@@ -5,7 +5,7 @@ from openai import OpenAI
 # Load environment variables
 load_dotenv()
 
-# Client initialized inside function
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_prompt(mood):
     """
@@ -15,9 +15,8 @@ def generate_prompt(mood):
         mood (str): The user's mood. Expected values: 'Excited', 'Happy', 'Calm', 'Neutral', 'Tired', 'Slightly Off', 'Anxious', 'Stressed', 'Sad', 'Awful'.
         
     Returns:
-        str: A generated journal prompt question.
+        str: A JSON string containing the mood and a list of questions.
     """
-    
     # Validate mood (optional, but good for debugging)
     # New 10 moods as requested
     valid_moods = [
@@ -25,59 +24,63 @@ def generate_prompt(mood):
     ]
     
     # Normalize input mood to lowercase and remove potential numbering/emojis if passed loosely
-    # For now, we assume the input is the text part, but we'll do a simple check
-    cleaned_mood = mood.lower().strip()
+    # For now, we assume the input is relatively clean or we just pass it to the prompt.
     
-    if cleaned_mood not in valid_moods:
-        # Fallback or warning, but we'll proceed with the input as is for flexibility
-        pass
+    system_prompt = """
+You are a helpful mental health journaling assistant.
+Your goal is to generate 6 to 8 thoughtful, open-ended journal prompt questions based on the user’s current mood.
+
+Your prompts should:
+- encourage emotional exploration,
+- help the user reflect on their feelings and experiences,
+- support insight and perspective,
+- match the tone of the user’s mood (gentle, supportive, appropriate).
+
+You must always keep a warm, encouraging, and non-judgmental tone.
+
+Output Format Requirements
+
+You MUST output a single JSON object in the following exact structure:
+
+{
+"mood": "<current_mood>",
+"questions": [
+{ "question": "<Question 1>" },
+{ "question": "<Question 2>" },
+{ "question": "<Question 3>" },
+...
+]
+}
+
+Rules for formatting:
+- Do NOT wrap the JSON in quotes.
+- Do NOT include markdown formatting (no ```json).
+- Do NOT add extra keys.
+- “questions” must be an array of objects, each containing one key: “question”.
+- Produce 6 to 8 questions every time.
+
+Behavior Rules
+
+- The questions must be open-ended and thoughtful.
+- They should guide the user to explore feelings, events, thoughts, and insights.
+- The tone must align with the mood (e.g., gentle if sad, uplifting if happy, grounding if anxious).
+- Do NOT give advice, analysis, or commentary—only generate questions.
+- Keep language simple, supportive, and warm.
+"""
 
     try:
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    except Exception as e:
-        return f"Error initializing OpenAI client: {e}"
-
-    system_prompt = (
-        "You are a helpful mental health journaling assistant. "
-        "Your goal is to generate a list of 6 to 8 thoughtful and open-ended journal prompt questions "
-        "based on the user's current mood. "
-        "The questions should encourage the user to explore their feelings, daily happenings, "
-        "and gain perspective. "
-        "Keep the tone supportive and appropriate for the mood. "
-        "You MUST output the result as a valid JSON array containing a single object with the following structure:\n"
-        "[\n"
-        "  {\n"
-        "    \"mood\": \"<current_mood>\",\n"
-        "    \"questions\": [\n"
-        "      \"<Question 1>\",\n"
-        "      \"<Question 2>\",\n"
-        "      ...\n"
-        "    ]\n"
-        "  }\n"
-        "]\n"
-        "Do NOT include any markdown formatting (like ```json). Just the raw JSON string."
-    )
-    
-    user_message = f"The user's mood is '{mood}'. Please suggest 6-8 journal prompt questions."
-
-    try:
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.chat.completions.create(
-            model="gpt-4o", 
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
+                {"role": "user", "content": f"The user is feeling: {mood}"}
             ],
-            temperature=0.7,
-            max_tokens=500,
             response_format={"type": "json_object"} # Enforce JSON mode
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
-        return f"Error generating prompt: {e}"
+        return f'{{"error": "Failed to generate prompt: {e}"}}'
 
 if __name__ == "__main__":
-    # Test the function
-    test_mood = "fair"
-    print(f"Mood: {test_mood}")
-    print(f"Prompt: {generate_prompt(test_mood)}")
+    # Test
+    print(generate_prompt("Happy"))

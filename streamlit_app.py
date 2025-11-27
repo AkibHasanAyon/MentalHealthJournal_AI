@@ -72,13 +72,28 @@ with tab2:
                 data = json.loads(json_response)
                 
                 # Display nicely
-                if isinstance(data, list) and len(data) > 0:
+                if isinstance(data, dict):
+                    item = data
+                    st.subheader(f"Prompts for mood: {item.get('mood', selected_mood)}")
+                    
+                    questions = item.get("questions", [])
+                    for i, q_obj in enumerate(questions, 1):
+                        # Handle both string (old) and object (new) formats for robustness
+                        q_text = q_obj.get("question") if isinstance(q_obj, dict) else q_obj
+                        st.markdown(f"**{i}.** {q_text}")
+                    
+                    # Show raw JSON for verification
+                    with st.expander("View Raw JSON"):
+                        st.json(data)
+                elif isinstance(data, list) and len(data) > 0:
                     item = data[0]
                     st.subheader(f"Prompts for mood: {item.get('mood', selected_mood)}")
                     
                     questions = item.get("questions", [])
-                    for i, q in enumerate(questions, 1):
-                        st.markdown(f"**{i}.** {q}")
+                    for i, q_obj in enumerate(questions, 1):
+                        # Handle both string (old) and object (new) formats for robustness
+                        q_text = q_obj.get("question") if isinstance(q_obj, dict) else q_obj
+                        st.markdown(f"**{i}.** {q_text}")
                     
                     # Show raw JSON for verification
                     with st.expander("View Raw JSON"):
