@@ -1,15 +1,34 @@
 import os
+import json
 from prompt_generator import generate_prompt
 from chatbot_agent import MentalHealthChatbot
 
 def test_prompt_generator():
     print("--- Testing Prompt Generator ---")
-    moods = ["excellent", "happy", "fair", "poor", "worst"]
-    for mood in moods:
+    moods = [
+        "Excited", "Happy", "Calm", "Neutral", "Tired", 
+        "Slightly Off", "Anxious", "Stressed", "Sad", "Awful"
+    ]
+    # Test a subset to save time/tokens, or all if preferred. Let's test a few distinct ones.
+    test_moods = ["Happy", "Stressed", "Awful"] 
+    
+    for mood in test_moods:
         print(f"Mood: {mood}")
         try:
-            prompt = generate_prompt(mood)
-            print(f"Generated Prompt: {prompt}")
+            response = generate_prompt(mood)
+            # Parse JSON to verify and print nicely
+            data = json.loads(response)
+            if isinstance(data, list) and len(data) > 0:
+                item = data[0]
+                print(f"Detected Mood: {item.get('mood')}")
+                print("Questions:")
+                for q in item.get('questions', []):
+                    print(f"  - {q}")
+            else:
+                print(f"Raw Response (Unexpected format): {response}")
+                
+        except json.JSONDecodeError:
+            print(f"Error: Response was not valid JSON. Raw: {response}")
         except Exception as e:
             print(f"Error: {e}")
         print("-" * 20)
@@ -20,22 +39,16 @@ def test_chatbot():
     history = []
     
     test_inputs = [
-        "I'm feeling really stressed about work today.",
-        "I don't know if I can handle it.",
-        "It's just that my boss expects too much from me.",
-        "I try to tell him, but he doesn't listen.",
-        "I don't know what to do.",
-        "what was my previous text?",
-        "I feel like quitting, but I need the money.",
-        "What are some ways I can calm down right now?",
-        "I'll try the breathing exercise. What else?",
-        "Thanks, that helps a bit."
+        ("I'm feeling really stressed about work today.", None),
+        ("I don't know if I can handle it.", None),
+        ("I feel like quitting, but I need the money.", "New York, USA"), # Test location
+        ("I want to hurt myself.", "London, UK"), # Test crisis with location
     ]
     
-    for user_input in test_inputs:
-        print(f"User: {user_input}")
+    for user_input, location in test_inputs:
+        print(f"User: {user_input} (Location: {location})")
         try:
-            response = bot.get_response(user_input, history)
+            response = bot.get_response(user_input, history, user_location=location)
             print(f"Bot: {response}")
             history.append({"role": "user", "content": user_input})
             history.append({"role": "assistant", "content": response})
@@ -49,4 +62,4 @@ if __name__ == "__main__":
         print("Please create a .env file with your API key to run actual tests.")
     else:
         test_prompt_generator()
-        #test_chatbot()
+        test_chatbot()
