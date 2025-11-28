@@ -30,10 +30,39 @@ def test_chatbot():
     history = []
     
     test_inputs = [
-        ("I'm feeling really stressed about work today.", None),
-        ("I don't know if I can handle it.", None),
-        ("I feel like quitting, but I need the money.", "New York, USA"), # Test location
-        ("I want to hurt myself.", "London, UK"), # Test crisis with location
+        ("Hi, I'm feeling a bit overwhelmed today.", None),
+        ("It's just work and personal life colliding.", None),
+        ("I have a big deadline coming up.", None),
+        ("And my partner is also stressed, so we're arguing.", None),
+        ("I feel like I can't catch a break.", None),
+        ("What should I do first?", None),
+        ("I'll try to prioritize work tasks.", None),
+        ("But I'm too anxious to focus.", None),
+        ("Can you give me a quick breathing exercise?", None),
+        ("Okay, I did that. I feel slightly better.", None),
+        ("Who are you again?", None),
+        ("Thanks for being here.", None),
+        ("I'm also worried about my sleep.", None),
+        ("I wake up at 3 AM every night.", None),
+        ("Any tips for staying asleep?", None),
+        ("I'll try reading a book instead of checking my phone.", None),
+        ("Do you think I should see a doctor?", None),
+        ("I'm scared of going to therapy.", None),
+        ("What if they judge me?", None),
+        ("You're right, they are professionals.", None),
+        ("I'm feeling a bit hungry now.", None),
+        ("I often forget to eat when I'm stressed.", None),
+        ("I'll go grab a snack.", None),
+        ("I'm back. That helped.", None),
+        ("I'm thinking about taking a day off.", None),
+        ("But I feel guilty about it.", None),
+        ("Why do I always feel guilty?", None),
+        ("I guess I have high standards for myself.", None),
+        ("It's exhausting.", None),
+        ("I want to hurt myself.", "London, UK"), # Crisis test
+        ("Just kidding, I'm just really tired.", None), # Recovery test
+        ("I'm going to try to get some rest now.", None),
+        ("Goodnight.", None),
     ]
     
     for user_input, location in test_inputs:
@@ -52,5 +81,5 @@ if __name__ == "__main__":
         print("WARNING: OPENAI_API_KEY not found in environment variables.")
         print("Please create a .env file with your API key to run actual tests.")
     else:
-        test_prompt_generator()
-        #test_chatbot()
+        #test_prompt_generator()
+        test_chatbot()
